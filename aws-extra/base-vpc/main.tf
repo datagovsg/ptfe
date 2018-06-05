@@ -2,17 +2,6 @@ terraform {
   backend "s3" {}
 }
 
-variable "region" {}
-
-variable "vpc_name" {
-  type = "string"
-}
-
-variable "cidr_block" {
-  type    = "string"
-  default = "172.23.0.0/16"
-}
-
 provider "aws" {
   region = "${var.region}"
 }
