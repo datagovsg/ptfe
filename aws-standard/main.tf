@@ -1,5 +1,18 @@
 terraform {
+  backend "s3" {}
   required_version = ">= 0.9.3"
+}
+
+variable "vpc_state_region" {
+  description = "AWS Region where the PTFE remote state is stored"
+}
+
+variable "vpc_state_bucket" {
+  description = "S3 where the PTFE remote state is stored"
+}
+
+variable "vpc_state_key" {
+  description = "Key where the VPC remote state is stored"
 }
 
 variable "fqdn" {
@@ -20,18 +33,18 @@ variable "cert_id" {
   description = "CMS certificate ID to use for TLS attached to the ELB"
 }
 
-variable "instance_subnet_id" {
-  description = "Subnet to place the instance into"
-}
-
-variable "elb_subnet_id" {
-  description = "Subnet that will hold the ELB"
-}
-
-variable "data_subnet_ids" {
-  description = "Subnets to place the data services (RDS) into (2 required for availability)"
-  type        = "list"
-}
+# variable "instance_subnet_id" {
+#   description = "Subnet to place the instance into"
+# }
+#
+# variable "elb_subnet_id" {
+#   description = "Subnet that will hold the ELB"
+# }
+#
+# variable "data_subnet_ids" {
+#   description = "Subnets to place the data services (RDS) into (2 required for availability)"
+#   type        = "list"
+# }
 
 variable "db_password" {
   description = "RDS password to use"
@@ -95,7 +108,7 @@ variable "instance_type" {
 }
 
 data "aws_subnet" "instance" {
-  id = "${var.instance_subnet_id}"
+  id = "${data.terraform_remote_state.vpc.public_subnet_ids[0]}"
 }
 
 data "aws_vpc" "vpc" {
@@ -260,8 +273,8 @@ module "instance" {
   hostname                    = "${var.fqdn}"
   vpc_id                      = "${data.aws_subnet.instance.vpc_id}"
   cert_id                     = "${var.cert_id}"
-  instance_subnet_id          = "${var.instance_subnet_id}"
-  elb_subnet_id               = "${var.elb_subnet_id}"
+  instance_subnet_id          = "${data.terraform_remote_state.vpc.public_subnet_ids[0]}"
+  elb_subnet_id               = "${data.terraform_remote_state.vpc.public_subnet_ids[0]}"
   key_name                    = "${var.key_name}"
   db_username                 = "${var.local_db ? "atlasuser" : var.db_username}"
   db_password                 = "${var.local_db ? "databasepassword" : var.db_password}"
@@ -296,7 +309,7 @@ module "db" {
   username                = "${var.db_username}"
   password                = "${var.db_password}"
   storage_gbs             = "${var.db_size_gb}"
-  subnet_ids              = "${var.data_subnet_ids}"
+  subnet_ids              = "${data.terraform_remote_state.vpc.private_subnet_ids}"
   engine_version          = "9.4"
   vpc_cidr                = "${data.aws_vpc.vpc.cidr_block}"
   vpc_id                  = "${data.aws_subnet.instance.vpc_id}"
@@ -311,7 +324,7 @@ module "redis" {
   source        = "../modules/redis"
   disable       = "${var.local_redis}"
   name          = "tfe-${random_id.installation-id.hex}"
-  subnet_ids    = "${var.data_subnet_ids}"
+  subnet_ids    = "${data.terraform_remote_state.vpc.private_subnet_ids}"
   vpc_cidr      = "${data.aws_vpc.vpc.cidr_block}"
   vpc_id        = "${data.aws_subnet.instance.vpc_id}"
   instance_type = "cache.m3.medium"
