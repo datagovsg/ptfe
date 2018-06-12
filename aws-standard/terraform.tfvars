@@ -10,7 +10,7 @@ vpc_state_key = "vpc"
 # Example: us-east-1
 region = "ap-southeast-1"
 #
-ami_id = "ami-c4a78fb8"
+ami_id = "ami-57fbff2b"
 #
 # The name that cluster will be known as. This value needs to match the DNS setup for proper operations.
 # Example: tfe-eng01.mycompany.io
