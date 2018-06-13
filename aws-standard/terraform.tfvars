@@ -15,6 +15,7 @@ ami_id = "ami-57fbff2b"
 # The name that cluster will be known as. This value needs to match the DNS setup for proper operations.
 # Example: tfe-eng01.mycompany.io
 fqdn = "ptfe.locus.rocks"
+base_domain = "locus.rocks"
 #
 # An AWS certificate ARN. This is the certification that will be used by the ELB for the cluster.
 # Example: arn:aws:acm:us-west-2:241656615859:certificate/f32fa674-de62-4681-8035-21a4c81474c6
@@ -50,7 +51,7 @@ bucket_name = "ptfe-tfe-artifacts"
 # Name of AWS ssh key pair that will be used. The pair must already exist, it
 # will not be created. If this variable is not set, no SSH access will be
 # available to the TFE instance.
-# key_name =
+key_name = "terraform"
 #
 # This Terraform config will create and manage the bucket named in `bucket_name`.
 # Set this to false if you are reusing an existing bucket.
@@ -92,7 +93,7 @@ bucket_name = "ptfe-tfe-artifacts"
 # This value combined with the zone information will form the full DNS name for TFE.
 # Example: emp-test
 # Default: "" (DNS record will not be managed by this Terraform config)
-# hostname =
+hostname = "ptfe"
 #
 # Used mostly for govcloud installations.
 # Example: aws-us-gov

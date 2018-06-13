@@ -19,15 +19,19 @@ variable "fqdn" {
   description = "The fully qualified domain name the cluster is accessible as"
 }
 
+variable "base_domain" {
+  description = "The base domain name"
+}
+
 variable "hostname" {
   description = "The name the cluster will be register as under the zone (optional if separately managing DNS)"
   default     = ""
 }
 
-variable "zone_id" {
-  description = "The route53 zone id to register the hostname in (optional if separately managing DNS)"
-  default     = ""
-}
+# variable "zone_id" {
+#   description = "The route53 zone id to register the hostname in (optional if separately managing DNS)"
+#   default     = ""
+# }
 
 variable "cert_id" {
   description = "CMS certificate ID to use for TLS attached to the ELB"
@@ -113,6 +117,11 @@ data "aws_subnet" "instance" {
 
 data "aws_vpc" "vpc" {
   id = "${data.aws_subnet.instance.vpc_id}"
+}
+
+data "aws_route53_zone" "selected" {
+  name         = "${var.base_domain}."
+  private_zone = false
 }
 
 variable "db_size_gb" {
@@ -260,7 +269,7 @@ resource "aws_kms_alias" "key" {
 module "route53" {
   source         = "../modules/tfe-route53"
   hostname       = "${var.hostname}"
-  zone_id        = "${var.zone_id}"
+  zone_id        = "${data.aws_route53_zone.selected.zone_id}"
   alias_dns_name = "${module.instance.dns_name}"
   alias_zone_id  = "${module.instance.zone_id}"
 }
