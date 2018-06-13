@@ -1,0 +1,45 @@
+---
+- name: Provision custom AMI for private TFE installation
+  hosts: all
+  vars:
+    tfe_installer_url: "https://install.terraform.io/ptfe/stable"
+  tasks:
+  - name: Upgrade all packages to the latest version
+    apt:
+      upgrade: yes
+      update_cache: yes
+    become: yes
+  - name: Install apt packages
+    apt:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+    - gcc
+    - git
+    - curl
+    become: yes
+  - name: Install pip3
+    apt:
+      name: python3-pip
+    become: yes
+  - name: Download private Terraform online installer
+    shell: curl {{ tfe_installer_url }} > {{ ansible_env.HOME }}/install.sh
+  # - name: Install pexpect python package
+  #   pip:
+  #     name: "{{ item }}"
+  #     state: latest
+  #   with_items:
+  #   - pexpect
+  #   become: yes
+  # - name: Run private Terraform online installer
+  #   expect:
+  #     command: curl {{ tfe_installer_url }} | bash
+  #     responses:
+  #       ".*Enter desired number .*: ": "0"
+  #       ".*Does this machine require a proxy to access the Internet? (y/N) ": "N"
+  #       ".*Do you want to allow this? (Y/n) ": "Y"
+  #       ".*Do you want to proceed anyway? (y/N) ": "y"
+  #       ".*Service IP address: ": "\n"
+  #     timeout: 600
+  #     echo: yes
+  #   become: yes

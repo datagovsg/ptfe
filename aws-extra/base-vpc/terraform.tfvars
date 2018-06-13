@@ -1,0 +1,5 @@
+region = "ap-southeast-1"
+vpc_name = "ptfe"
+cidr_block = "10.159.0.0/16"
+peer_cidr_block = "10.158.0.0/16"
+peer_vpc_id = "vpc-2d1bb64a"

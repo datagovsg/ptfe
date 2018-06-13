@@ -1,20 +1,25 @@
 # Please refer to the README.md for additional documentation on each variable and additional optional variables that may be set.
 
+vpc_state_region = "ap-southeast-1"
+vpc_state_bucket = "ptfe-terraform-state"
+vpc_state_key = "vpc"
+
 # Required Variables
 #
 # The AWS region to deploy into.
 # Example: us-east-1
-# region =
+region = "ap-southeast-1"
 #
-# ami_id =
+ami_id = "ami-57fbff2b"
 #
 # The name that cluster will be known as. This value needs to match the DNS setup for proper operations.
 # Example: tfe-eng01.mycompany.io
-# fqdn =
+fqdn = "ptfe.locus.rocks"
+base_domain = "locus.rocks"
 #
 # An AWS certificate ARN. This is the certification that will be used by the ELB for the cluster.
 # Example: arn:aws:acm:us-west-2:241656615859:certificate/f32fa674-de62-4681-8035-21a4c81474c6
-# cert_id =
+cert_id = "arn:aws:acm:ap-southeast-1:526453021918:certificate/8d8d8724-e2b0-4d41-b336-a25ba2a786fd"
 #
 # Subnet id of the subnet that the cluster's instance will be placed into.
 # If this is a public subnet, the instance will be assigned a public IP.
@@ -36,17 +41,17 @@
 # data_subnet_ids =
 #
 # Password that will be used to access RDS. Example: databaseshavesecrets
-# db_password =
+db_password = "databaseshavesecrets"
 #
 # Name of the S3 bucket to store artifacts used by the cluster into. This bucket is automatically created.
 # Example: tfe-mycompany-data
-# bucket_name =
+bucket_name = "ptfe-tfe-artifacts"
 
 # Optional variables
 # Name of AWS ssh key pair that will be used. The pair must already exist, it
 # will not be created. If this variable is not set, no SSH access will be
 # available to the TFE instance.
-# key_name =
+key_name = "terraform"
 #
 # This Terraform config will create and manage the bucket named in `bucket_name`.
 # Set this to false if you are reusing an existing bucket.
@@ -88,7 +93,7 @@
 # This value combined with the zone information will form the full DNS name for TFE.
 # Example: emp-test
 # Default: "" (DNS record will not be managed by this Terraform config)
-# hostname =
+hostname = "ptfe"
 #
 # Used mostly for govcloud installations.
 # Example: aws-us-gov
@@ -118,8 +123,8 @@
 #
 # Setting for server-side encryption of objects in S3; if provided, must be set to "aws:kms".
 # Default: ""
-# archivist_sse =
+archivist_sse = "aws:kms"
 #
 # KMS key ID (full ARN) for server-side encryption of objects stored in S3.
 # Default: ""
-# archivist_kms_key_id =
+archivist_kms_key_id = "arn:aws:kms:ap-southeast-1:526453021918:key/c706d052-510e-40c2-8f95-34d617868419"
